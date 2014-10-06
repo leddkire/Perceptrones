@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <iostream>
 using namespace std;
 
 class Perceptron{
@@ -10,7 +12,7 @@ class Perceptron{
 		Perceptron(int numPesos){
 			pesosOriginales = new float[numPesos];
 			pesos = new float[numPesos];
-			cout << "Pesos sin ajustar : " ;
+			//cout << "Pesos sin ajustar : " ;
 			for(int i = 0; i< numPesos; i++){
 				float valor = static_cast <float> (rand()) / static_cast <float> (RAND_MAX/0.1);
 				pesosOriginales[i] =  valor;
@@ -67,6 +69,7 @@ class PerceptronRule{
 
 	public:
 		float *pesos;
+		float *pesosOriginales;
 		int nPesos;
 		float *derivadaRegla;
 		float *errores;
@@ -74,13 +77,15 @@ class PerceptronRule{
 		PerceptronRule(int numPesos){
 			pesos = new float[numPesos];
 			derivadaRegla = new float[numPesos];
+			pesosOriginales = new float[numPesos];
 			errores = new float[numPesos];
 
-			cout << "Pesos sin ajustar : " << pesos[0] << ", ";
+			//cout << "Pesos sin ajustar : " << pesos[0] << ", ";
 			for(int i = 0; i< numPesos; i++){
-				pesos[i] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX/0.1);
+				float valor = static_cast <float> (rand()) / static_cast <float> (RAND_MAX/0.1);
+				pesosOriginales[i] =  valor;
+				pesos[i] = valor;
 				cout << pesos[i] << ", ";
-				derivadaRegla[i] = 0.00;
 				errores[i] = 0.00;
 			};
 			nPesos = numPesos;
@@ -88,24 +93,18 @@ class PerceptronRule{
 
 		int resetPesos(){
 			for(int i = 0; i< nPesos; i++){
-				pesos[i] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX/0.1);
+				pesos[i] = pesosOriginales[i];
 				cout << pesos[i] << ", ";
-				derivadaRegla[i] = 0.00;
-				errores[i] = 0.00;
 			};
 		}
 
-		int procesarEntrada(bool* entradas, int numEntradas){
+		float procesarEntrada(bool* entradas, int numEntradas){
 			float sum = 0;
 			sum+= pesos[0];
 			for(int i =0; i< numEntradas; i++){
 				sum += pesos[i+1] * entradas[i];
 			}
-			if(sum >0){
-				return 1;
-			}else{
-				return -1;
-			}
+			return sum;
 		}
 
 		/*
@@ -113,18 +112,22 @@ class PerceptronRule{
 		 *	entradas = xi
 		 */
 
-		void entrenar(bool* entradas, int test, float eta, int numEntradas){
+		float entrenar(bool* entradas, int test, float eta, int numEntradas){
 			float o = procesarEntrada(entradas, numEntradas);
-			derivadaRegla[0]+=-(test-o); 
+			derivadaRegla[0]+=-(test-o);
+			cout << "Valor pesos: ";
+			pesos[0] += eta*(test-o);
 			for(int i = 0; i < numEntradas; i++){
-				
-				derivadaRegla[i+1] += -(test-o)*entradas[i];
-				//errores[i] += pow(test-o, 2);
-			}
+				//if(entradas[i] == 0) pesos[i] += eta*(test-o)*(-1);
+				pesos[i+1] += eta*(test-o)*entradas[i];
+				cout << pesos[i+1] << "\n";
 
-			for(int i = 0; i < nPesos; i++){
-				pesos[i] += -eta*derivadaRegla[i];
 			}
+			cout << "numEntradas: " << numEntradas << "\n";
+			cout << "Entradas: " << entradas[0] << "," << entradas[1] << "," << entradas[2] << "\n";
+			cout << "OutPut: " << o << "\n";
+
+			return (test-o)*(test-o);
 		}
 			
 

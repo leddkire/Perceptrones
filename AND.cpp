@@ -1,5 +1,4 @@
-#include <stdlib.h>
-#include <iostream>
+
 #include <cmath>
 #include <fstream>
 #include "perceptron.cpp"
@@ -10,6 +9,8 @@ int main(){
 
 	ofstream archivo;
 	archivo.open("Error_And");
+	ofstream archivo2;
+	archivo2.open("Error_And_Delta");
 	cout << "Especifique el numero de entradas que tendra el perceptron: ";
 	cin >> numBits;
 	cout << "\n";
@@ -151,13 +152,49 @@ int main(){
 		}
 		cout << "\n";
 	}
+	archivo.close();
 
 //EJERCICIO 2
 //'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 //PARTE 2.a)
 //'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 //----------------REGLA DE ENTRENAMIENTO AND-----------------------\\
+	error_global = 1;
+	iteracion = 0;
+	iteraciones_maximas=1000;
 
+	cout << "\n\n/**********************/\nEjercicio 2 con regla de entrenamiento \n/**********************/\n";
+	PerceptronRule jackson = PerceptronRule(numBits+1);
+	do{
+		iteracion++;
+		error_global =0;
+		for(int j = 0 ; j < numEjemplos; j++){
+			entrada = entradas[j];
+			if(testAND[j] == -1) error_global+= jackson.entrenar(entrada,0,eta,numEntradas);
+			else error_global+= jackson.entrenar(entrada,testAND[j],eta,numEntradas);
+			
+		}
+		archivo2 << error_global << "\n";
+	}while(error_global!=0 && iteracion <= iteraciones_maximas );
 
+	
+
+	cout << "Termino de entrenar \n";
+
+	cout << "Prueba del AND \n";
+
+	for (int i = 0 ; i < numEjemplos ; i++){
+		entrada = entradas[i];
+		for(int j = 0; j < numEntradas; j++){
+			if(j == numEntradas-1){
+				cout << entrada[j] << "\n";
+			}else{
+				cout << entrada[j] << ", ";
+			}
+		}
+    	float resultado = jackson.procesarEntrada(entrada, numEntradas);
+		cout << "Resultado: " << resultado << "\n\n*********************\n";
+	}
+	archivo2.close();
 
 }
