@@ -163,7 +163,7 @@ int main(){
 
 	error_global = 1;
 	iteracion = 0;
-	iteraciones_maximas=1000;
+	iteraciones_maximas=500;
 
 	cout << "\n\n/**********************/\nEjercicio 2 con regla de entrenamiento \n/**********************/\n";
 	PerceptronRule jackson = PerceptronRule(numBits+1);
@@ -198,4 +198,98 @@ int main(){
 		cout << "Resultado: " << resultado << "\n\n*********************\n";
 	}
 	archivo2.close();
+
+	cout << "******************\nEntrenando OR con distintas constantes eta\n\n\n";
+	//float arreta [5] = {0.01,0.1,0.2,0.5,0.99};
+	for(int i =0;i < 5; i++){
+		jackson.resetPesos();
+
+
+		cout << "Entrenando con eta = " << arreta[i] << "\n";
+		float error_global=1;
+		int iteraciones_maximas=1000;
+		int iteracion = 0;
+
+		do{
+		iteracion++;
+		error_global =0;
+		for(int j = 0 ; j < numEjemplos; j++){
+
+			entrada = entradas[j];
+			error_global+= jackson.entrenar(entrada,testOR[j],arreta[i],numEntradas);
+			
+		}
+		//cout << error_global << "<<< ERROR GLOBAL\n";
+		}while(error_global!=0 && iteracion <= iteraciones_maximas );
+
+		cout << "Termino de entrenar \n";
+
+		cout << "Prueba del AND \n";
+
+		for (int i = 0 ; i < numEjemplos ; i++){
+			entrada = entradas[i];
+			for(int j = 0; j < numEntradas; j++){
+				if(j == numEntradas-1){
+					cout << entrada[j] << "\n";
+				}else{
+					cout << entrada[j] << ", ";
+				}
+			}
+	    	float resultado = jackson.procesarEntrada(entrada, numEntradas);
+			cout << "Resultado: " << resultado << "\n\n*********************\n";
+		}
+
+		cout << "Pesos ajustados: ";
+		for (int i = 0; i < jackson.nPesos; i++){
+			cout << jackson.pesos[i] << ", ";
+		}
+		cout << "\n";
+	}
+
+	cout << "******************\nEntrenando OR valor descendiente de eta en la iesima iteración:\n\n\n";
+	for(int i =0;i < 5; i++){
+		jackson.resetPesos();
+
+
+		cout << "Entrenando con eta = " << arreta[i] << "\n";
+		float error_global=1;
+		int iteraciones_maximas=1000;
+		int iteracion = 0;
+
+		do{
+		iteracion++;
+		error_global =0;
+		for(int j = 0 ; j < numEjemplos; j++){
+
+			entrada = entradas[j];
+			if(j != 0) error_global+= jackson.entrenar(entrada,testAND[j],arreta[i]/j,numEntradas);
+			else error_global+= jackson.entrenar(entrada,testOR[j],arreta[i],numEntradas);
+			
+		}
+		//cout << error_global << "<<< ERROR GLOBAL\n";
+		}while(error_global!=0 && iteracion <= iteraciones_maximas );
+
+		cout << "Termino de entrenar \n";
+
+		cout << "Prueba del OR \n";
+
+		for (int i = 0 ; i < numEjemplos ; i++){
+			entrada = entradas[i];
+			for(int j = 0; j < numEntradas; j++){
+				if(j == numEntradas-1){
+					cout << entrada[j] << "\n";
+				}else{
+					cout << entrada[j] << ", ";
+				}
+			}
+	    	float resultado = jackson.procesarEntrada(entrada, numEntradas);
+			cout << "Resultado: " << resultado << "\n\n*********************\n";
+		}
+
+		cout << "Pesos ajustados: ";
+		for (int i = 0; i < jackson.nPesos; i++){
+			cout << jackson.pesos[i] << ", ";
+		}
+		cout << "\n";
+	}
 }

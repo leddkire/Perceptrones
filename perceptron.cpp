@@ -115,17 +115,17 @@ class PerceptronRule{
 		float entrenar(bool* entradas, int test, float eta, int numEntradas){
 			float o = procesarEntrada(entradas, numEntradas);
 			derivadaRegla[0]+=-(test-o);
-			cout << "Valor pesos: ";
+			//cout << "Valor pesos: ";
 			pesos[0] += eta*(test-o);
 			for(int i = 0; i < numEntradas; i++){
 				//if(entradas[i] == 0) pesos[i] += eta*(test-o)*(-1);
 				pesos[i+1] += eta*(test-o)*entradas[i];
-				cout << pesos[i+1] << "\n";
+				//cout << pesos[i+1] << "\n";
 
 			}
-			cout << "numEntradas: " << numEntradas << "\n";
-			cout << "Entradas: " << entradas[0] << "," << entradas[1] << "," << entradas[2] << "\n";
-			cout << "OutPut: " << o << "\n";
+			//cout << "numEntradas: " << numEntradas << "\n";
+			//cout << "Entradas: " << entradas[0] << "," << entradas[1] << "," << entradas[2] << "\n";
+			//cout << "OutPut: " << o << "\n";
 
 			return (test-o)*(test-o);
 		}
