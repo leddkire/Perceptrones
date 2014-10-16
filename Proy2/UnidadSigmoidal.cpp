@@ -12,7 +12,9 @@ public:
 	float salida = 0;
 	int numPesos;
 	float derivada = 0;
+	UnidadSigmoidal(){
 
+	}
 
 	UnidadSigmoidal(int nPesos){
 		pesosOriginales= new float[nPesos];
@@ -22,7 +24,6 @@ public:
 				float valor = static_cast <float> (rand()) / static_cast <float> (RAND_MAX/0.1);
 				pesosOriginales[i] =  valor;
 				pesos[i] = valor;
-				cout << pesos[i] << ", ";
 
 		};
 	}
@@ -30,7 +31,6 @@ public:
 	int resetPesos(){
 			for(int i = 0; i< numPesos; i++){
 				pesos[i] = pesosOriginales[i];
-				cout << pesos[i] << ", ";
 			};
 		}
 
@@ -54,26 +54,38 @@ class Capa{
 public:
 	UnidadSigmoidal* neuronas;
 	int numNeuronas;
+	Capa(){
+
+	}
+	Capa(UnidadSigmoidal* neuronasDeCapa, int numeroNeuronas){
+		neuronas = neuronasDeCapa;
+		numNeuronas = numeroNeuronas;
+	}
 };
 
-float backpropagation(float* ejemplos, int numEjemplos, int numCapas, int numNeuronasInter, Capa* red, float* test, float eta){
+float backpropagation(float* ejemplos, int numEjemplos, int numCapas, Capa* red, float* test, float eta){
 	UnidadSigmoidal* capa;
 	float* entradas = ejemplos;
 	float* nuevasEntradas;
+	float sumaErrorCuadrado = 0;
 	for(int i =0; i< numCapas; i++){
-		nuevasEntradas = new float[red[i].numNeuronas];
 		capa = red[i].neuronas;
-		for(int j = 0; j < numNeuronasInter; j++){
+		for(int j = 0; j < red[i].numNeuronas; j++){
 			capa[j].calcularSalida(entradas);
-			nuevasEntradas[j] = capa[j].salida;
+			entradas[j] = capa[j].salida;
 		}
-		entradas = nuevasEntradas;
+
 		
 	}
+	for (int j = 0; j< red[numCapas-1].numNeuronas;j++){
+		sumaErrorCuadrado += (test[j] - capa[j].salida)*(test[j] - capa[j].salida);
+	}
+		
 	//Nota: al final de la iteracion la variable entradas tendra el arreglo de salidas de la capa de output
 	capa = red[numCapas-1].neuronas;
 	for(int j=0; j<red[numCapas-1].numNeuronas;j++){
 		capa[j].derivada = capa[j].salida * (1 - capa[j].salida)*(test[j]-capa[j].salida);
+		
 	}
 	
 	for(int j=numCapas-2; j>=0; j--){
@@ -98,6 +110,6 @@ float backpropagation(float* ejemplos, int numEjemplos, int numCapas, int numNeu
 		}
 	}
 	
-	return 0;
+	return sumaErrorCuadrado;
 }
 
