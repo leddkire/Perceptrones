@@ -5,23 +5,24 @@ using namespace std;
 
 class UnidadSigmoidal{
 public:
-	float *pesosOriginales;
-	float* pesos;
+	double *pesosOriginales;
+	double* pesos;
 	//La primera entrada siempre es 1. Este es el peso interno de la neurona.
-	float* entradas;
-	float salida = 0;
+	double* entradas;
+	double salida = 0;
 	int numPesos;
-	float derivada = 0;
+	double derivada = 0;
 	UnidadSigmoidal(){
 
 	}
 
 	UnidadSigmoidal(int nPesos){
-		pesosOriginales= new float[nPesos];
-		pesos = new float[nPesos];
+		pesosOriginales= new double[nPesos];
+		pesos = new double[nPesos];
+		entradas = new double[nPesos -1];
 		numPesos = nPesos;
 		for(int i = 0; i< numPesos; i++){
-				float valor = static_cast <float> (rand()) / static_cast <float> (RAND_MAX/0.1);
+				double valor = static_cast <double> (rand()) / static_cast <double> (RAND_MAX/0.1);
 				pesosOriginales[i] =  valor;
 				pesos[i] = valor;
 
@@ -34,16 +35,19 @@ public:
 			};
 		}
 
-	void calcularSalida(float* entrada){
+	void calcularSalida(double* entrada){
 		//Primero se calcula la suma de todos los wi*xi (Pesos por su entrada).
-		float sum = 0;
+		double sum = 0;
 		sum += pesos[0];
-		for(int i = 0; i < numPesos -1; i++){
-			sum += pesos[i+1]*entrada[i];
+		for(int i = 1; i < numPesos; i++){
+			sum += pesos[i]*entrada[i-1];
 		}
 		//Luego se aplica este resultado sobre la funcion sigmoidal, y este sera la salida.
 		salida = 1/(1 + exp(-sum));
-		entradas = entrada;
+		for(int i = 0; i< numPesos -1; i++){
+			entradas[i] = entrada[i];
+		}
+		
 	
 	}
 	
@@ -63,20 +67,30 @@ public:
 	}
 };
 
-float backpropagation(float* ejemplos, int numEjemplos, int numCapas, Capa* red, float* test, float eta){
+double backpropagation(double* ejemplos, int numEjemplos, int numCapas, Capa* red, double* test, double eta){
 	UnidadSigmoidal* capa;
-	float* entradas = ejemplos;
-	float* nuevasEntradas;
-	float sumaErrorCuadrado = 0;
+	double* entradas = new double[numEjemplos];
+	for(int i =0; i < numEjemplos; i++){
+		entradas[i] = ejemplos[i];
+	}
+	double* nuevasEntradas;
+	double sumaErrorCuadrado = 0;
 	for(int i =0; i< numCapas; i++){
 		capa = red[i].neuronas;
 		for(int j = 0; j < red[i].numNeuronas; j++){
 			capa[j].calcularSalida(entradas);
+			
+		}
+		delete entradas;
+		entradas = new double[red[i].numNeuronas];
+		for(int j = 0; j < red[i].numNeuronas; j++){
 			entradas[j] = capa[j].salida;
+			
 		}
 
 		
 	}
+	delete entradas;
 	for (int j = 0; j< red[numCapas-1].numNeuronas;j++){
 		sumaErrorCuadrado += (test[j] - capa[j].salida)*(test[j] - capa[j].salida);
 	}
@@ -89,7 +103,7 @@ float backpropagation(float* ejemplos, int numEjemplos, int numCapas, Capa* red,
 	}
 	
 	for(int j=numCapas-2; j>=0; j--){
-		float sum = 0;
+		double sum = 0;
 		UnidadSigmoidal* capaReceptora = red[j+1].neuronas;
 		UnidadSigmoidal* capaIntermedia = red[j].neuronas;
 		for(int k = 0; k < red[j].numNeuronas; k++){
@@ -103,8 +117,9 @@ float backpropagation(float* ejemplos, int numEjemplos, int numCapas, Capa* red,
 	for(int i=0; i < numCapas; i++){
 		capa = red[i].neuronas;
 		for(int j=0; j < red[i].numNeuronas; j++){
-			for(int k = 0; k < capa[j].numPesos; k++){
-				capa[j].pesos[k+1] += eta*(capa[j].derivada)*capa[j].entradas[k];
+			capa[j].pesos[0] += eta*(capa[j].derivada);
+			for(int k = 1; k < capa[j].numPesos; k++){
+				capa[j].pesos[k] += eta*(capa[j].derivada)*capa[j].entradas[k-1];
 			}
 			
 		}
