@@ -20,7 +20,7 @@ void generarDatos(double arreglo[][3] , int tam){
 	int i = 0;
 	random_device rd;
     mt19937 eng(rd());
-    uniform_int_distribution<> distr(0, 20);
+    uniform_real_distribution<> distr(0, 20);
     while(numDatosDentroCirc > 0 && numDatosFueraCirc > 0){
     	x = distr(eng);
     	y = distr(eng);
@@ -41,11 +41,11 @@ void generarDatos(double arreglo[][3] , int tam){
 
 void entrenar(double entradas[][3], int tam, int numEntradas, int numSalidas, int numCapas, Capa* red, double eta, double* coordenadas, double* test){
 	
-	double error_global=1;
+	double error_global=0;
 	int iteraciones_maximas=1000;
 	int iteracion = 0;
 	stringstream nombreArchivo;
-	nombreArchivo << "./" << red[0].numNeuronas << "/" << "errores_generados_" << tam;
+	nombreArchivo << "./" << "ejercicio2_" << red[0].numNeuronas << "/" << "errores_generados_" << tam;
 	ofstream errores;
 	errores.open(nombreArchivo.str());
 
@@ -96,7 +96,7 @@ int main(){
 		UnidadSigmoidal* intermedia = new UnidadSigmoidal[numeroNeuronasInter];
 		cout <<"Se reservo memoria para la capa intermedia \n";
 		stringstream nombreDir;
-		nombreDir << numeroNeuronasInter;
+		nombreDir << "ejercicio2_" << numeroNeuronasInter;
 		string temp = nombreDir.str();
 		const char* nDir = temp.c_str();
 		mkdir(nDir,S_IRWXU);
@@ -117,7 +117,7 @@ int main(){
 		
 		
 		
-		cout << "Entrenando con " << numeroNeuronasInter << " neuronas en la capa intermedia \n";
+		cout << "Entrenando con " <<  numeroNeuronasInter << " neuronas en la capa intermedia \n";
 		for(int i =0; i < 3; i++){
 			
 			string linea;
@@ -130,13 +130,13 @@ int main(){
 			}
 
 			stringstream nombreArchivo;
-			nombreArchivo << "./" << numeroNeuronasInter << "/" << "errores_conjunto_" << i;
+			nombreArchivo << "./"<< "ejercicio2_" << numeroNeuronasInter << "/" << "errores_conjunto_" << i;
 			ofstream errores;
 			errores.open(nombreArchivo.str());
 			
 
 			
-			double error_global=1;
+			double error_global=0;
 			int iteraciones_maximas=1000;
 			int iteracion = 0;
 
