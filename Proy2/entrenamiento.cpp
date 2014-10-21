@@ -132,7 +132,7 @@ int main(){
 		stringstream nombreDir;
 		nombreDir << "ejercicio2_" << numeroNeuronasInter;
 		string temp = nombreDir.str();
-		const char* nDir = temp.c_str();
+		const char* nDir = temp.c_str()+"-Iris";
 		mkdir(nDir,S_IRWXU);
 		//Inicializacion de los pesos de cada capa.
 		for(int i = 0; i < numeroNeuronasInter; i++){
