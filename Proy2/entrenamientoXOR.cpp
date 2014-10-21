@@ -15,33 +15,23 @@ using namespace std;
 //La otra mitad fuera de ella y dentro de la region cuadrada.
 
 void prueba_2(Capa* red, int numEntradas, int numCapas, string nombreArchivo){
-	int tamPrueba = 100;
+	double ent[4][2] = { {0,0}, {0,1}, {1,0}, {1,1}};
 	double entradas[2];
-	double test[1];
+	double test[4] = {-1,1,1,-1};
 	double* resultado;
 	ofstream resultadosPrueba;
 	resultadosPrueba.open(nombreArchivo);	
-	for(int i = 0; i<tamPrueba; i++){
-		for(int j =0; j < tamPrueba; j++){
-			entradas[0] = double(i) / 5.0;
-			entradas[1] = double(j) / 5.0;
-			double comprobacion = pow(entradas[0]-10,2) + pow(entradas[1]-10,2);
-    		if(comprobacion <= 49){
-    			
-    			test[0] = -1;
-    		}else if(comprobacion >49){
-    			
-    			test[0] = 1;
-    		}
-    		resultado = red -> calcularSalida(entradas, numEntradas,numCapas,red);
-    		for(int k =0; k < red[numCapas-1].numNeuronas; k++){
-    			resultadosPrueba << entradas[0] << ", " << entradas[1] << "  " <<
-    			red[numCapas-1].neuronas[k].salida<< ", " << test[0] << "\n";
-    		}
-			
-		}
+	for(int i = 0; i<4; i++){
+		entradas[0] = ent[i][0];
+		entradas[1] = ent[i][1];
+
+    	resultado = red -> calcularSalida(entradas, numEntradas,numCapas,red);
+    		cout << entradas[0] << ", " << entradas[1] << "  " << 
+    		red[numCapas-1].neuronas[0].salida << ", " << test[i] << "\n";
+
 	}
 	resultadosPrueba.close();
+	
 }
 void generarDatos(double arreglo[][3] , int tam){
 	int numDatosFueraCirc = tam / 2;
@@ -57,7 +47,7 @@ void generarDatos(double arreglo[][3] , int tam){
     	double comprobacion = pow(x-10,2) + pow(y-10,2);
     	if(comprobacion <= 49 && numDatosDentroCirc > 0){
     		numDatosDentroCirc--;
-    		arreglo[i][2] = 0;
+    		arreglo[i][2] = -1;
     	}else if(comprobacion >49 && numDatosFueraCirc >0){
     		numDatosFueraCirc--;
     		arreglo[i][2] = 1;
@@ -68,11 +58,11 @@ void generarDatos(double arreglo[][3] , int tam){
     }
 	
 }
-
+/*
 void entrenar(double entradas[][3], int tam, int numEntradas, int numSalidas, int numCapas, Capa* red, double eta, double* coordenadas, double* test){
 	
 	double error_global=0;
-	int iteraciones_maximas=100000;
+	int iteraciones_maximas=1000;
 	int iteracion = 0;
 	stringstream nombreArchivo;
 	nombreArchivo << "./" << "ejercicio2_" << red[0].numNeuronas << "/" << "errores_generados_" << tam;
@@ -104,36 +94,28 @@ void entrenar(double entradas[][3], int tam, int numEntradas, int numSalidas, in
 	stringstream nombreArchivoR;
 	nombreArchivoR<< "./" << "ejercicio2_" << red[0].numNeuronas << "/" << "resultados_" << tam;
 
-	prueba_2(red, numEntradas,numCapas,nombreArchivoR.str());
+	//prueba_2(red, numEntradas,numCapas,nombreArchivoR.str());
 
 }
-
+*/
 int main(){
 	//Se inicializa la capa intermedia con el valor provisto.
 	int numEntradas = 2;
 	int numCapas = 2;
 	int numSalidas = 1;
-	double eta = 0.1;
-	ifstream entradas [3];
-	double entradasGeneradas500 [500][3];
-	double entradasGeneradas1000 [1000][3];
-	double entradasGeneradas2000 [2000][3];
-	entradas[0].open("datos_P1_2_SD2014_n500.txt");
-	entradas[1].open("datos_P1_2_SD2014_n1000.txt");
-	entradas[2].open("datos_P1_2_SD2014_n2000.txt");
+	double eta = 0.5;
+
 	ofstream errores;
 	UnidadSigmoidal* salida = new UnidadSigmoidal[numSalidas];
+	double entradas[4][2] = { {0,0}, {0,1}, {1,0}, {1,1}};
 	double* coordenadas = new double[numEntradas];
-	double* test = new double[numSalidas];
+	double res[4] = {-1,1,1,-1};
+	double* test = new double[1];
 	//Pidiendo numero de neuronas que habra en la capa intermedia.
-	for(int numeroNeuronasInter = 2; numeroNeuronasInter <=10; numeroNeuronasInter++){
+	for(int numeroNeuronasInter = 2; numeroNeuronasInter <=2; numeroNeuronasInter++){
 		
 		UnidadSigmoidal* intermedia = new UnidadSigmoidal[numeroNeuronasInter];
 		stringstream nombreDir;
-		nombreDir << "ejercicio2_" << numeroNeuronasInter;
-		string temp = nombreDir.str();
-		const char* nDir = temp.c_str();
-		mkdir(nDir,S_IRWXU);
 		//Inicializacion de los pesos de cada capa.
 		for(int i = 0; i < numeroNeuronasInter; i++){
 			intermedia[i] =  UnidadSigmoidal(numEntradas+1);
@@ -164,7 +146,7 @@ int main(){
 			}
 
 			stringstream nombreArchivo;
-			nombreArchivo << "./"<< "ejercicio2_" << numeroNeuronasInter << "/" << "errores_conjunto_" << i;
+			nombreArchivo << "./"<< "XOR_errores" << numeroNeuronasInter;
 			ofstream errores;
 			errores.open(nombreArchivo.str());
 			
@@ -177,44 +159,32 @@ int main(){
 			do{
 			iteracion++;
 			error_global =0;
-				while(getline(entradas[i],linea)){
-					stringstream entrada(linea);
-					for(int j = 0 ; j < numEntradas; j++){
-						entrada >> coordenadas[j];
+				
+				for(int j = 0; j < 4; j++){
+					coordenadas[0] = entradas[j][0];
+					coordenadas[1] = entradas[j][1];
+					if(res[j] == -1){
+						test[0] = 0;
+					} else{
+						test[0] = res[j];
 					}
-					for(int j = 0; j <numSalidas; j++){
-						entrada >> test[j];
-						if(test[j] == -1){
-							test[j] == 0;
-						}
-					}
+					
+					
 					error_global += backpropagation(coordenadas, numEntradas, numCapas, red,test, eta);
-
 				}
-			entradas[i].clear();
-			entradas[i].seekg(0,ios::beg);	
-			errores << error_global << "\n";
+				errores << error_global << "\n";
 			}while(error_global!=0 && iteracion < iteraciones_maximas );
-			errores.close();
 			
 		}
+		stringstream nombreArchivoR;
+		nombreArchivoR << "./resultadosXOR_"<< numeroNeuronasInter;
+		prueba_2(red,numEntradas,numCapas,nombreArchivoR.str());
 		
-		
-
-		//Ahora se generan los datos del segundo conjunto de entrenamiento y se entrena
-		generarDatos(entradasGeneradas500,500);
-		generarDatos(entradasGeneradas1000,1000);
-		generarDatos(entradasGeneradas2000,2000);
-		entrenar(entradasGeneradas500,500, numEntradas, numSalidas, numCapas, red, eta, coordenadas, test);
-		entrenar(entradasGeneradas1000,1000,numEntradas, numSalidas,numCapas, red, eta, coordenadas, test);
-		entrenar(entradasGeneradas2000,2000,numEntradas, numSalidas,numCapas, red, eta, coordenadas, test);
 		cout << "Se Termino de entrenar \n";
+
 
 		
 	}
 
-	for(int i = 0; i < 3; i++){
-			entradas[i].close();
-		}
 
 }

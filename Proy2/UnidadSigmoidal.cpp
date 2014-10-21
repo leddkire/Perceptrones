@@ -65,6 +65,33 @@ public:
 		neuronas = neuronasDeCapa;
 		numNeuronas = numeroNeuronas;
 	}
+	double* calcularSalida(double* ejemplos, int numEjemplos, int numCapas, Capa* red){
+		UnidadSigmoidal* capa;
+		double* entradas = new double[numEjemplos];
+		double salida;
+		for(int i =0; i < numEjemplos; i++){
+			entradas[i] = ejemplos[i];
+		}
+		double* nuevasEntradas;
+		double sumaErrorCuadrado = 0;
+		for(int i =0; i< numCapas; i++){
+			capa = red[i].neuronas;
+			for(int j = 0; j < red[i].numNeuronas; j++){
+				capa[j].calcularSalida(entradas);
+				red[i].neuronas[j].calcularSalida(entradas);
+				
+			}
+			delete entradas;
+			entradas = new double[red[i].numNeuronas];
+			for(int j = 0; j < red[i].numNeuronas; j++){
+
+				entradas[j] = capa[j].salida;
+			}	
+		}
+
+		return entradas;
+	
+	}
 };
 
 double backpropagation(double* ejemplos, int numEjemplos, int numCapas, Capa* red, double* test, double eta){
@@ -107,10 +134,11 @@ double backpropagation(double* ejemplos, int numEjemplos, int numCapas, Capa* re
 		UnidadSigmoidal* capaReceptora = red[j+1].neuronas;
 		UnidadSigmoidal* capaIntermedia = red[j].neuronas;
 		for(int k = 0; k < red[j].numNeuronas; k++){
-			for(int i = 0; i < red[numCapas-1].numNeuronas;i++){
+			sum=0;
+			for(int i = 0; i < red[j+1].numNeuronas;i++){
 				sum+= capaReceptora[i].pesos[k+1] * capaReceptora[i].derivada;
 			}
-			capaIntermedia[k].derivada = sum;
+			capaIntermedia[k].derivada =capaIntermedia[k].salida * (1 - capaIntermedia[k].salida)* sum;
 		}
 	}
 	//Actualizar pesos
@@ -125,6 +153,6 @@ double backpropagation(double* ejemplos, int numEjemplos, int numCapas, Capa* re
 		}
 	}
 	
-	return sumaErrorCuadrado;
+	return sumaErrorCuadrado/2.0;
 }
 
