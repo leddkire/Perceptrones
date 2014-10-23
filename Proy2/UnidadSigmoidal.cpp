@@ -1,5 +1,6 @@
 #include <cmath>
 #include <fstream>
+#include <random>
 #include <iostream>
 using namespace std;
 
@@ -21,8 +22,13 @@ public:
 		pesos = new double[nPesos];
 		entradas = new double[nPesos -1];
 		numPesos = nPesos;
+		random_device rd;
+   		mt19937 eng(rd());
+   		uniform_real_distribution<> distr(-0.5, 0.5);
 		for(int i = 0; i< numPesos; i++){
-				double valor = static_cast <double> (rand()) / static_cast <double> (RAND_MAX/0.1);
+				double valor;
+				
+   				valor = distr(eng);
 				pesosOriginales[i] =  valor;
 				pesos[i] = valor;
 
@@ -152,7 +158,6 @@ double backpropagation(double* ejemplos, int numEjemplos, int numCapas, Capa* re
 			
 		}
 	}
-	
 	return sumaErrorCuadrado/2.0;
 }
 
