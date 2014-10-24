@@ -60,11 +60,18 @@ int main(int ,char **)
 			mglData dat(nombre.data());
 			mglData x = dat.SubData(0);
 			mglData y = dat.SubData(1);
+			stringstream nombreArchAfuera;
+			nombreArchAfuera << base_dir << i << base_res << j << "Afuera";
+			string nombreAfuera = nombreArchAfuera.str();
+			mglData dat(nombreAfuera.data());
+			mglData xA = dat.SubData(0);
+			mglData yA = dat.SubData(1);
 			gr.Alpha(true);   gr.Light(true);
 			gr.Box();
 			gr.SetSize(1000,1000);
 			gr.SetOrigin(NAN,NAN); gr.SetRange('x',0,100); gr.SetRange('y',0,100);
 			gr.Plot(x,y," .");
+			gr.Plot(xA,yA,"R.");
 		  	gr.Axis(); gr.Label('x',"x",0); gr.Axis();gr.Label('y',"y",0);
 		  	nombreArch << "_imagen";
 			nombre = nombreArch.str();

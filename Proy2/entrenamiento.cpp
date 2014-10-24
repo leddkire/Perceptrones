@@ -22,7 +22,9 @@ void prueba_2(Capa* red, int numEntradas, int numCapas, string nombreArchivo){
 	double* resultado;
 	int aciertos =0;
 	ofstream resultadosPrueba;
+	ofstream resultadosPruebaAfuera;
 	resultadosPrueba.open(nombreArchivo);	
+	resultadosPruebaAfuera.open(nombreArchivo+"Afuera");	
 	for(int i = 0; i<tamPrueba; i++){
 		for(int j =0; j < tamPrueba; j++){
 			entradas[0] = double(i) / 5.0;
@@ -48,14 +50,14 @@ void prueba_2(Capa* red, int numEntradas, int numCapas, string nombreArchivo){
 
     				resultadosPrueba << entradas[0]*100 << " " << entradas[1]*100 << "\n";
     			}
-
+    		} else {
+    				resultadosPruebaAfuera << entradas[0]*100 << " " << entradas[1]*100 << "\n";
     		}
-    		
-			
 		}
 	}
 	cout << aciertos<< "/" << tamPrueba*tamPrueba << "\n";
 	resultadosPrueba.close();
+	resultadosPruebaAfuera.close();
 }
 void generarDatos(double arreglo[][3] , int tam){
 	
