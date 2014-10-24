@@ -61,12 +61,18 @@ int main(int ,char **)
 			mglData x = dat.SubData(0);
 			mglData y = dat.SubData(1);
 			stringstream nombreArchAfuera;
+			nombreArchAfuera << base_dir << i << base_res << j << "Afuera";
+			string nombreA = nombreArchAfuera.str();
+			mglData datA(nombreA.data());
+			mglData xA = datA.SubData(0);
+			mglData yA = datA.SubData(1);
 			
 			gr.Alpha(true);   gr.Light(true);
 			gr.Box();
 			gr.SetSize(1000,1000);
 			gr.SetOrigin(NAN,NAN); gr.SetRange('x',0,100); gr.SetRange('y',0,100);
 			gr.Plot(x,y," .");
+			gr.Plot(xA,yA," .");
 		  	gr.Axis(); gr.Label('x',"x",0); gr.Axis();gr.Label('y',"y",0);
 		  	nombreArch << "_imagen";
 			nombre = nombreArch.str();
@@ -75,7 +81,7 @@ int main(int ,char **)
 
 	}
 
-	base_error = "/errores_binario_porcentaje";
+	base_error = "/errores_binario_porcentaje_";
 	base_dir = "./ejercicio3_";
 	base_res = "/resultados_conjunto_";
 	numConjuntos = 5;
@@ -85,19 +91,59 @@ int main(int ,char **)
 			stringstream nombreArch;
 			nombreArch << base_dir << i << base_error << 50+(10*j);
 			string nombre = nombreArch.str();
-			mglData dat(nombre.data());
-			mglData x = dat.SubData(0);
+
+			ifstream entrada;
+			entrada.open(nombre.data());
+			double* arr = new double[5000];
+			for(int p =0;p < 5000; p++){
+				entrada >> arr[p];
+			}
+
+			mglData dat(arr,5000);
+			//mglData x = dat.SubData(0);
 			gr.Alpha(true);   gr.Light(true);
 			gr.Box();
 			gr.SetSize(1000,1000);
-			gr.SetOrigin(NAN,NAN);
-			gr.Plot(x);
+
+			gr.Plot(dat); gr.SetRange('x',0,5000); gr.SetRange('y',0,20);
 		  	gr.Axis(); gr.Label('x',"x",0); gr.Axis();gr.Label('y',"y",0);
 		  	nombreArch << "_imagen";
 			nombre = nombreArch.str();
 			gr.WritePNG(nombre.data());
+			delete arr;
 		}
-		cout << i << "\n";
+	}
+
+	base_error = "/errores_clases_porcentaje_";
+	base_dir = "./ejercicio3_";
+	base_res = "/resultados_conjunto_";
+	numConjuntos = 5;
+	for(int i =4; i < top; i++){
+		for(int j =0; j <numConjuntos; j++){
+			mglGraph gr;
+			stringstream nombreArch;
+			nombreArch << base_dir << i << base_error << 50+(10*j);
+			string nombre = nombreArch.str();
+
+			ifstream entrada;
+			entrada.open(nombre.data());
+			double* arr = new double[5000];
+			for(int p =0;p < 5000; p++){
+				entrada >> arr[p];
+			}
+			mglData dat(arr,500);
+			mglData x = dat.SubData(0);
+			gr.Alpha(true);   gr.Light(true);
+			gr.Box();
+			gr.SetSize(1000,1000);
+			gr.SetOrigin(0,0);
+			gr.Plot(dat); gr.SetRange('x',0,10000); gr.SetRange('y',0,20);
+		  	gr.Axis(); gr.Label('x',"x",0); gr.Axis();gr.Label('y',"y",0);
+		  	nombreArch << "_imagen";
+			nombre = nombreArch.str();
+			gr.WritePNG(nombre.data());
+			delete arr;
+		}
 	}
 	/*mglData dat("./ejercicio2_10/resultados_conjunto_5");
 	mglData x = dat.SubData(0);

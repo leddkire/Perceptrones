@@ -42,17 +42,19 @@ void prueba_2(Capa* red, int numEntradas, int numCapas, string nombreArchivo){
     		resultado = red -> calcularSalida(entradas, numEntradas,numCapas,red);
     		if(resultado[0] > 0.5 && test[0] == 1){
     			aciertos++;
+    			
+    			
     		}else if(resultado[0] <= 0.5 && test[0]==-1){
     			aciertos++;
+    			
     		}
-    		if(resultado[0] < 0.5  && test[0] == 1){
-    			for(int k =0; k < red[numCapas-1].numNeuronas; k++){
-
-    				resultadosPrueba << entradas[0]*100 << " " << entradas[1]*100 << "\n";
-    			}
-    		} else if(resultado[0] >= 0.5 && test[0]==-1) {
-    				resultadosPruebaAfuera << entradas[0]*100 << " " << entradas[1]*100 << "\n";
+    		if(resultado[0] > 0.5){
+    			resultadosPruebaAfuera << entradas[0]*100 << " " << entradas[1]*100 << "\n";
+    		}else{
+    			resultadosPrueba << entradas[0]*100 << " " << entradas[1]*100 << "\n";	
     		}
+    		
+    					
 		}
 	}
 	cout << aciertos<< "/" << tamPrueba*tamPrueba << "\n";
@@ -65,7 +67,7 @@ int main(){
 	int numEntradas = 2;
 	int numCapas = 2;
 	int numSalidas = 1;
-	double eta = 0.1;
+	double eta = 0.15;
 	ifstream entradas [6];
 	double entradasGeneradas500 [500][3];
 	double entradasGeneradas1000 [1000][3];
@@ -85,7 +87,6 @@ int main(){
 	
 
 	for(int numeroNeuronasInter = 2; numeroNeuronasInter <=10; numeroNeuronasInter++){
-		
 		UnidadSigmoidal* intermedia = new UnidadSigmoidal[numeroNeuronasInter];
 		stringstream nombreDir;
 		nombreDir << "ejercicio2_" << numeroNeuronasInter;
