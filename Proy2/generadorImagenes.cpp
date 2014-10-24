@@ -22,7 +22,7 @@ int main(int ,char **)
 	int lineas =0;
 	int i =0;
 	int j =0;
-	int numDirs = 11;
+	int top = 11;
 	int numConjuntos = 6;
 	double* arreglo;
 	arreglo = new double[100];
@@ -33,7 +33,7 @@ int main(int ,char **)
 	string base_dir = "./ejercicio2_";
 	string base_res = "/resultados_conjunto_";
 
-	for(int i =2; i < numDirs; i++){
+	for(int i =2; i < top; i++){
 		for(int j =0; j <numConjuntos; j++){
 			mglGraph gr;
 			stringstream nombreArch;
@@ -71,6 +71,31 @@ int main(int ,char **)
 			gr.WritePNG(nombre.data());
 		}
 
+	}
+
+	base_error = "/errores_binario_porcentaje";
+	base_dir = "./ejercicio3_";
+	base_res = "/resultados_conjunto_";
+	numConjuntos = 5;
+	for(int i =4; i < top; i++){
+		for(int j =0; j <numConjuntos; j++){
+			mglGraph gr;
+			stringstream nombreArch;
+			nombreArch << base_dir << i << base_error << 50+(10*j);
+			string nombre = nombreArch.str();
+			mglData dat(nombre.data());
+			mglData x = dat.SubData(0);
+			gr.Alpha(true);   gr.Light(true);
+			gr.Box();
+			gr.SetSize(1000,1000);
+			gr.SetOrigin(NAN,NAN);
+			gr.Plot(x);
+		  	gr.Axis(); gr.Label('x',"x",0); gr.Axis();gr.Label('y',"y",0);
+		  	nombreArch << "_imagen";
+			nombre = nombreArch.str();
+			gr.WritePNG(nombre.data());
+		}
+		cout << i << "\n";
 	}
 	/*mglData dat("./ejercicio2_10/resultados_conjunto_5");
 	mglData x = dat.SubData(0);

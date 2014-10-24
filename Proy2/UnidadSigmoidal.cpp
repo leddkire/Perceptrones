@@ -84,7 +84,6 @@ public:
 			capa = red[i].neuronas;
 			for(int j = 0; j < red[i].numNeuronas; j++){
 				capa[j].calcularSalida(entradas);
-				red[i].neuronas[j].calcularSalida(entradas);
 				
 			}
 			delete entradas;
@@ -139,7 +138,7 @@ double backpropagation(double* ejemplos, int numEjemplos, int numCapas, Capa* re
 		double sum = 0;
 		UnidadSigmoidal* capaReceptora = red[j+1].neuronas;
 		UnidadSigmoidal* capaIntermedia = red[j].neuronas;
-		for(int k = 0; k < red[j].numNeuronas; k++){
+		for(int k = 1; k < red[j].numNeuronas; k++){
 			sum=0;
 			for(int i = 0; i < red[j+1].numNeuronas;i++){
 				sum+= capaReceptora[i].pesos[k+1] * capaReceptora[i].derivada;
