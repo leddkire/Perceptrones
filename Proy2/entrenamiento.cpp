@@ -40,17 +40,17 @@ void prueba_2(Capa* red, int numEntradas, int numCapas, string nombreArchivo){
     		entradas[0] = entradas[0]/20.0;
     		entradas[1] = entradas[1]/20.0;
     		resultado = red -> calcularSalida(entradas, numEntradas,numCapas,red);
-    		if(resultado[0] >= 0.5 && test[0] == 1){
+    		if(resultado[0] > 0.5 && test[0] == 1){
     			aciertos++;
-    		}else if(resultado[0] < 0.5 && test[0]==-1){
+    		}else if(resultado[0] <= 0.5 && test[0]==-1){
     			aciertos++;
     		}
-    		if(resultado[0] < 0.5){
+    		if(resultado[0] < 0.5  && test[0] == 1){
     			for(int k =0; k < red[numCapas-1].numNeuronas; k++){
 
     				resultadosPrueba << entradas[0]*100 << " " << entradas[1]*100 << "\n";
     			}
-    		} else {
+    		} else if(resultado[0] >= 0.5 && test[0]==-1) {
     				resultadosPruebaAfuera << entradas[0]*100 << " " << entradas[1]*100 << "\n";
     		}
 		}
@@ -58,91 +58,6 @@ void prueba_2(Capa* red, int numEntradas, int numCapas, string nombreArchivo){
 	cout << aciertos<< "/" << tamPrueba*tamPrueba << "\n";
 	resultadosPrueba.close();
 	resultadosPruebaAfuera.close();
-}
-void generarDatos(double arreglo[][3] , int tam){
-	
-   /* while(numDatosDentroCirc > 0 || numDatosFueraCirc > 0 && i < tam){
-    	x = distr(eng);
-    	y = distr(eng);
-    	double comprobacion = pow(x-10,2) + pow(y-10,2);
-    	if(comprobacion <= 49 && numDatosDentroCirc > 0){
-    		numDatosDentroCirc--;
-    		arreglo[i][2] = 0;
-    	}else if(comprobacion >49 && numDatosFueraCirc >0){
-    		numDatosFueraCirc--;
-    		arreglo[i][2] = 1;
-    	}
-    	arreglo[i][0] = x/20.0;
-    	arreglo[i][1] = y/20.0;
-    	i++;
-    }*/
-	
-}
-
-void entrenar(double entradas[][3], int tam, int numEntradas, int numSalidas, int numCapas, Capa* red, double eta, double* coordenadas, double* test){
-	
-	double error_global=0;
-	int iteraciones_maximas=10000;
-	int iteracion = 0;
-	stringstream nombreArchivo;
-	nombreArchivo << "./" << "ejercicio2_" << red[0].numNeuronas << "/" << "errores_generados_" << tam;
-	ofstream errores;
-	errores.open(nombreArchivo.str());
-
-	int numDatosFueraCirc =0;
-	int numDatosDentroCirc =0;
-	
-
-	double x, y;
-	int i = 0;
-	random_device rd;
-    mt19937 eng(rd());
-    uniform_real_distribution<> distr(0, 20);
-
-
-    do{
-    	iteracion++;
-		error_global =0;
-		int numDatosFueraCirc =0;
-		int numDatosDentroCirc =0;
-		while(numDatosDentroCirc < tam/2 || numDatosFueraCirc <tam/2){
-			x = distr(eng);
-    		y = distr(eng);
-    		double comprobacion = pow(x-10,2) + pow(y-10,2);
-    		if(comprobacion <= 49.0 && numDatosDentroCirc < tam/2 ){
-    			test[0] = 0;
-    			coordenadas[0] = x/20.0;
-    			coordenadas[1] = y/20.0;
- 				numDatosDentroCirc++;
- 				error_global += backpropagation(coordenadas, numEntradas, numCapas, red,test, eta);
-    		}else if(comprobacion >49.0 && numDatosFueraCirc < tam/2){
-    			test[0] = 1;
-    			coordenadas[0] = x/20.0;
-    			coordenadas[1] = y/20.0;
- 				numDatosFueraCirc++;
- 				
- 				error_global += backpropagation(coordenadas, numEntradas, numCapas, red,test, eta);
-    		}
-		}
-    		
-    	
-    	errores << error_global << "\n";
-	}while(error_global >= 0.01 && iteracion < iteraciones_maximas );
-
-
-		
-	for(int j = 0; j < numCapas; j++){
-		for(int k = 0; k < red[j].numNeuronas; k++){
-			red[j].neuronas[k].resetPesos();
-		}
-	}
-	errores.close();
-
-	stringstream nombreArchivoR;
-	nombreArchivoR<< "./" << "ejercicio2_" << red[0].numNeuronas << "/" << "resultados_" << tam;
-
-	prueba_2(red, numEntradas,numCapas,nombreArchivoR.str());
-
 }
 
 int main(){
@@ -249,14 +164,6 @@ int main(){
 			prueba_2(red,numEntradas,numCapas,nombrePrueba.str());
 		}
 		
-		/*
-		generarDatos(entradasGeneradas500,500);
-		entrenar(entradasGeneradas500,500, numEntradas, numSalidas, numCapas, red, eta, coordenadas, test);
-		generarDatos(entradasGeneradas1000,1000);
-		entrenar(entradasGeneradas1000,1000,numEntradas, numSalidas,numCapas, red, eta, coordenadas, test);
-		generarDatos(entradasGeneradas2000,2000);
-		entrenar(entradasGeneradas2000,2000,numEntradas, numSalidas,numCapas, red, eta, coordenadas, test);
-		*/
 		cout << "Se Termino de entrenar \n";
 
 		

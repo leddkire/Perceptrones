@@ -9,11 +9,6 @@
 
 using namespace std;
 
-//La generacion de datos acorde al enunciado
-//Se tiene una region cuadrada del (0,0) al (20,20)
-//Hay una circunferencia dentro de la region
-//Para un arreglo N de puntos, la mitad tiene que estar adentro de la circunferencia
-//La otra mitad fuera de ella y dentro de la region cuadrada.
 
 void prueba_Binaria(Capa* red, int numEntradas, int numSalidas, int numCapas, string nombreArchivo){
 	double entradas[2];
@@ -59,25 +54,7 @@ void prueba_Binaria(Capa* red, int numEntradas, int numSalidas, int numCapas, st
 	cout << aciertos<< "/" << lineas << "\n";
 	resultadosPrueba.close();
 }
-void generarDatos(double arreglo[][3] , int tam){
-	
-   /* while(numDatosDentroCirc > 0 || numDatosFueraCirc > 0 && i < tam){
-    	x = distr(eng);
-    	y = distr(eng);
-    	double comprobacion = pow(x-10,2) + pow(y-10,2);
-    	if(comprobacion <= 49 && numDatosDentroCirc > 0){
-    		numDatosDentroCirc--;
-    		arreglo[i][2] = 0;
-    	}else if(comprobacion >49 && numDatosFueraCirc >0){
-    		numDatosFueraCirc--;
-    		arreglo[i][2] = 1;
-    	}
-    	arreglo[i][0] = x/20.0;
-    	arreglo[i][1] = y/20.0;
-    	i++;
-    }*/
-	
-}
+
 
 
 
