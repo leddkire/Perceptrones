@@ -1,0 +1,15 @@
+Seleccion de padre: Rueda de Ruleta. Seleccion de sobrevivientes: reemplazo del 50 por ciento 
+    PORCENTAJE :0.982133
+    NUMERO DE REGLAS : 3.02
+
+Seleccion de padre: Torneo. Seleccion de sobrevivientes: reemplazo del 50 por ciento 
+    PORCENTAJE :0.981733
+    NUMERO DE REGLAS : 3.07
+
+Seleccion de padre: Rueda de Ruleta. Seleccion de sobrevivientes: Sobreviven los dos mejores y reemplazan a los dos peores 
+    PORCENTAJE :0.8624
+    NUMERO DE REGLAS : 8.51
+
+Seleccion de padre: Torneo. Seleccion de sobrevivientes: Sobreviven los dos mejores y reemplazan a los dos peores 
+    PORCENTAJE :0.932666
+    NUMERO DE REGLAS : 7.97
