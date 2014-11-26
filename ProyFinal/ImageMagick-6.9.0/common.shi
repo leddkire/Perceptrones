@@ -1,0 +1,21 @@
+# Test environment
+top_srcdir='/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0'
+top_builddir='/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0'
+
+set -a
+COMPARE="/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0/utilities/compare"
+COMPOSITE="/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0/utilities/composite"
+CONJURE="/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0/utilities/conjure"
+CONVERT="/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0/utilities/convert"
+DISPLAY="/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0/utilities/display"
+IDENTIFY="/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0/utilities/identify"
+MONTAGE="/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0/utilities/montage" 
+VALIDATE="/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0/tests/validate"
+DRAWTEST="/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0/tests/drawtest"
+WANDTEST="/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0/tests/wandtest"
+LD_LIBRARY_PATH="/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0/magick/.libs:${LD_LIBRARY_PATH}"
+MAGICK_CODER_MODULE_PATH="/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0/coders"
+MAGICK_CONFIGURE_PATH="/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0/config:/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0/config"
+MAGICK_FILTER_MODULE_PATH="/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0/filters"
+PATH="/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0/utilities:/home/anigarden/Documents/InteligenciaArtificialII/Perceptrones/ProyFinal/ImageMagick-6.9.0/tests:${PATH}"
+set +a
