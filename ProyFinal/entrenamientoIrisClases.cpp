@@ -23,7 +23,7 @@ void prueba_Clases(Capa* red, int numEntradas, int numSalidas, int numCapas, str
 	const char *nomT[3] = {"pixel_test15.txt", "pixel_test20.txt", "pixel_test25.txt"};
 	double esp[4][4] = {{1,0,0,0},{0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
 	//for(int i =0; i < numArchivos; i++){
-		datosPrueba.open(nomT[numArch]);
+		datosPrueba.open("pixel_test.txt");
 		//datosPrueba[1].open("pixel_input20.txt");
 		//datosPrueba[2].open("pixel_input25.txt");
 		while(getline(datosPrueba,linea)){
@@ -34,6 +34,7 @@ void prueba_Clases(Capa* red, int numEntradas, int numSalidas, int numCapas, str
 				entrada >> coordenadas[j];
 				if(coordenadas[j] == 5) coordenadas[j] = 0.501961;
 				//entrada >> ch;
+
 			}
 			string tipo;
 			entrada >> tipo;
@@ -93,14 +94,13 @@ void prueba_Clases(Capa* red, int numEntradas, int numSalidas, int numCapas, str
 
 int main(){
 	//Se inicializa la capa intermedia con el valor provisto.
-	int numEntradas = 32*44;
+	int numEntradas = 25*19;
 	int numCapas = 2;
 	int numSalidas = 4;
 	double eta = 0.05;
-	ifstream entradas [3];
-	entradas[0].open("pixel_input15.txt");
-	entradas[1].open("pixel_input20.txt");
-	entradas[2].open("pixel_input25.txt");
+	ifstream entradas [1];
+	entradas[0].open("pixel_input.txt");
+
 	//entradas[3].open("iris80.txt");
 	//entradas[4].open("iris90.txt");
 	int numArchivos = 3;
@@ -109,7 +109,8 @@ int main(){
 	double* coordenadas = new double[numEntradas];
 	double* test = new double[numSalidas];
 	//Pidiendo numero de neuronas que habra en la capa intermedia.
-	int numeroNeuronasInter = 10;
+
+	int numeroNeuronasInter = 12;
 
 	//for(int numeroNeuronasInter = 4; numeroNeuronasInter <=10; numeroNeuronasInter++){
 		
@@ -155,7 +156,7 @@ int main(){
 
 			
 			double error_global=0;
-			int iteraciones_maximas=10000;
+			int iteraciones_maximas=20000;
 			int iteracion = 0;
 			int lineas = 0;
 			double esp[4][4] = {{1,0,0,0},{0,1,0,0}, {0,0,1,0}, {0,0,0,1}};

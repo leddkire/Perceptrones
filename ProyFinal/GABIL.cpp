@@ -10,9 +10,9 @@
 #include <ga/std_stream.h>
 #include <ga/GASStateGA.h>
 
-#define NUMERO_MAX_REGLAS 10
+#define NUMERO_MAX_REGLAS 8
 #define NUMERO_MIN_REGLAS 4
-#define RULE_SIZE 4226
+#define RULE_SIZE 1902
 #define EXPERIMENTOS 1
 
 using namespace std;
@@ -46,9 +46,9 @@ int main(int argc, char* argv[]){
 	vector<string> conjuntoPruebaCons;
 	dosVec conjuntoPruebas;
 	string lineaE;
-	int popsize  = 200;
+	int popsize  = 2000;
   int ngen     = 1000;
-  float pmut   = 0.0000001;
+  float pmut   = 0.00000000001;
   float pcross = 0.8;
 
 	//Definicion de parametros para el algoritmo
@@ -77,15 +77,17 @@ int main(int argc, char* argv[]){
 		string dato;
 		stringstream datoEntrenAnt;
 		stringstream datoEntrenCons;
-		for(int i = 0; i < (RULE_SIZE -2)/3; i++){
+		for(int i = 0; i < (RULE_SIZE -2)/4; i++){
 			streamLineaE >> dato;
-			int datoNumerico = stoi(dato);
-			if(datoNumerico == 0){
-				datoEntrenAnt << "001";
-			}else if (datoNumerico == 5){
-				datoEntrenAnt << "010";
-			}else{
-				datoEntrenAnt << "100";
+			int datoNumerico = stof(dato);
+			if(datoNumerico >= 0.0 && datoNumerico < 0.25){
+				datoEntrenAnt << "0001";
+			}else if (datoNumerico >= 0.25 && datoNumerico < 0.5){
+				datoEntrenAnt << "0010";
+			}else if(datoNumerico >= 0.5 && datoNumerico < 0.75){
+				datoEntrenAnt << "0100";
+			}else if(datoNumerico >= 0.75 && datoNumerico <= 1.0){
+				datoEntrenAnt << "1000";
 			}
 
 		}
@@ -107,18 +109,18 @@ int main(int argc, char* argv[]){
 				datoPruebaAnt << "001";
 			}else if (datoNumerico == 5){
 				datoPruebaAnt << "010";
-			}else{
+			}else if(datoNumerico == 1){
 				datoPruebaAnt << "100";
 			}
 
 		}
+
 		conjuntoPruebaAnt.push_back(datoPruebaAnt.str());
 		streamLineaE >> dato;
 		datoPruebaCons << codificar2(dato);
 		conjuntoPruebaCons.push_back(datoPruebaCons.str());
 
 	}
-cout << conjuntoEntrenamientoAnt.size() << "\n";
 
 	conjuntoEntrenamiento.ant = conjuntoEntrenamientoAnt;
 	conjuntoEntrenamiento.cons = conjuntoEntrenamientoCons;
@@ -143,7 +145,6 @@ cout << conjuntoEntrenamientoAnt.size() << "\n";
 	  	ga.flushFrequency(25);
 	  	ga.scoreFrequency(25);
 	  	for(int i = 0; i < EXPERIMENTOS; i++){
-	  		cout << "GA\n";
 	  		ga.evolve();
 	  		//cout << "The GA found:\n" << ga.statistics().bestIndividual() << "\n";
 	  		GA1DBinaryStringGenome lol(0,fitnessPorTam,&conjuntoPruebas);
@@ -154,6 +155,7 @@ cout << conjuntoEntrenamientoAnt.size() << "\n";
   		}
 
  	cout << ga.statistics() << "\n";
+
 	  	promedioResultados << "    PORCENTAJE :" << porcentajeTotal/EXPERIMENTOS << "\n";
 	  	promedioResultados << "    NUMERO DE REGLAS : " <<  numReglasTotal/EXPERIMENTOS << "\n";
 	  	cout << "    PORCENTAJE :" << porcentajeTotal/EXPERIMENTOS<< "\n";
@@ -175,7 +177,6 @@ void Initializer(GAGenome& g){
 }
 
 float fitnessPorTam(GAGenome& g){
-	
 	GA1DBinaryStringGenome & genoma = (GA1DBinaryStringGenome &)g;
 	dosVec* cjtoEntren = (dosVec*)g.userData();
 	vector<string> cjtoEntrenAnt = cjtoEntren -> ant;
@@ -197,9 +198,10 @@ float fitnessPorTam(GAGenome& g){
 		for(int k = 0; k < numReglas; k++){
 			match = true;
 			for(unsigned int j =0; j < cjtoEntrenAnt[i].length();j++){
-			
+				
 				if(cjtoEntrenAnt[i].at(j) == '1'){
 					if(genoma.gene(j+(longitudTotal*k)) == 0){
+
 						match = false;
 						break;
 					}
@@ -208,7 +210,7 @@ float fitnessPorTam(GAGenome& g){
 			//Si encontro una regla que aplica, evaluar el resultado para ver si es correcto
 			
 			if(match){
-
+				cout << "MATCH\n";
 				bool matchRes = true;
 
 				for(unsigned int j = 0; j < cjtoEntrenCons[i].length();j++){
