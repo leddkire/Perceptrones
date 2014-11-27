@@ -9,7 +9,7 @@
 
 using namespace std;
 
-void prueba_Clases(Capa* red, int numEntradas, int numSalidas, int numCapas, string nombreArchivo){
+void prueba_Clases(Capa* red, int numEntradas, int numSalidas, int numCapas, string nombreArchivo, int numArch){
 	double entradas[32*44];
 	double test[4];
 	double* resultado;
@@ -20,67 +20,73 @@ void prueba_Clases(Capa* red, int numEntradas, int numSalidas, int numCapas, str
 	resultadosPrueba.open(nombreArchivo);
 	ifstream datosPrueba;
 	string linea;
+	const char *nomT[3] = {"pixel_test15.txt", "pixel_test20.txt", "pixel_test25.txt"};
 	double esp[4][4] = {{1,0,0,0},{0,1,0,0}, {0,0,1,0}, {0,0,0,1}};
-	datosPrueba.open("pixel_test.txt");
-	while(getline(datosPrueba,linea)){
+	//for(int i =0; i < numArchivos; i++){
+		datosPrueba.open(nomT[numArch]);
+		//datosPrueba[1].open("pixel_input20.txt");
+		//datosPrueba[2].open("pixel_input25.txt");
+		while(getline(datosPrueba,linea)){
 
-		istringstream entrada(linea);
-		char ch;
-		for(int j = 0 ; j < numEntradas; j++){
-			entrada >> coordenadas[j];
-			//entrada >> ch;
-		}
-		string tipo;
-		entrada >> tipo;
-		int tipoEsp =0;
-		cout << tipo << "\n";
-		if(tipo == "happy"){
-			tipoEsp =0;
-		}else if(tipo == "angry"){
-			tipoEsp =1;
-		}else if(tipo == "sad"){
-			tipoEsp =2;
-		}else if(tipo == "surprised"){
-			tipoEsp =3;
-		}
-		for(int j = 0; j <numSalidas; j++){			
-			test[j] = esp[tipoEsp][j];
-		}
-		resultado = red -> calcularSalida(coordenadas, numEntradas,numCapas,red);
-		resultadosPrueba << resultado[0] << " " <<  resultado[1]<< " " <<  resultado[2] << " " << resultado[3] << "\n";
-		if(resultado[0] >= 0.5 && test[0] == 1){
-			if(resultado[1] < 0.5 && test[1] ==0){
-				if(resultado[2]<0.5 && test[2] == 0){
-					if(resultado[3]<0.5 && test[3] == 0){
-						aciertos++;
-					}
-				}
+			istringstream entrada(linea);
+			char ch;
+			for(int j = 0 ; j < numEntradas; j++){
+				entrada >> coordenadas[j];
+				if(coordenadas[j] == 5) coordenadas[j] = 0.501961;
+				//entrada >> ch;
 			}
-    	}else if(resultado[0] < 0.5 && test[0]==0){
-    		if(resultado[1] >= 0.5 && test[1] ==1){
-				if(resultado[2]<0.5 && test[2] == 0){
-					if(resultado[3]<0.5 && test[3] == 0){
-						aciertos++;
-					}
-				}
-			}else if(resultado[1] < 0.5 && test[1] == 0){
-				if(resultado[2]>=0.5 && test[2] == 1){
-					if(resultado[3]<0.5 && test[3] == 0){
-						aciertos++;
-					}
-				}else if(resultado[2]<0.5 && test[2] == 0){
-					if(resultado[3]>=0.5 && test[3] == 1){
-						aciertos++;
-					}
-				}
+			string tipo;
+			entrada >> tipo;
+			int tipoEsp =0;
+			cout << tipo << "\n";
+			if(tipo == "happy"){
+				tipoEsp =0;
+			}else if(tipo == "angry"){
+				tipoEsp =1;
+			}else if(tipo == "sad"){
+				tipoEsp =2;
+			}else if(tipo == "surprised"){
+				tipoEsp =3;
 			}
+			for(int j = 0; j <numSalidas; j++){			
+				test[j] = esp[tipoEsp][j];
+			}
+			resultado = red -> calcularSalida(coordenadas, numEntradas,numCapas,red);
+			resultadosPrueba << resultado[0] << " " <<  resultado[1]<< " " <<  resultado[2] << " " << resultado[3] << "\n";
+			if(resultado[0] >= 0.5 && test[0] == 1){
+				if(resultado[1] < 0.5 && test[1] ==0){
+					if(resultado[2]<0.5 && test[2] == 0){
+						if(resultado[3]<0.5 && test[3] == 0){
+							aciertos++;
+						}
+					}
+				}
+	    	}else if(resultado[0] < 0.5 && test[0]==0){
+	    		if(resultado[1] >= 0.5 && test[1] ==1){
+					if(resultado[2]<0.5 && test[2] == 0){
+						if(resultado[3]<0.5 && test[3] == 0){
+							aciertos++;
+						}
+					}
+				}else if(resultado[1] < 0.5 && test[1] == 0){
+					if(resultado[2]>=0.5 && test[2] == 1){
+						if(resultado[3]<0.5 && test[3] == 0){
+							aciertos++;
+						}
+					}else if(resultado[2]<0.5 && test[2] == 0){
+						if(resultado[3]>=0.5 && test[3] == 1){
+							aciertos++;
+						}
+					}
+				}
 
-    	}
-    	lineas++;
-	}
+	    	}
+	    	lineas++;
+		}
 
-	cout << aciertos<< "/" << lineas << "\n";
-	resultadosPrueba.close();
+		cout << aciertos<< "/" << lineas << "\n";
+		resultadosPrueba.close();
+	//}
 }
 
 
@@ -90,20 +96,20 @@ int main(){
 	int numEntradas = 32*44;
 	int numCapas = 2;
 	int numSalidas = 4;
-	double eta = 0.1;
-	ifstream entradas [1];
-	entradas[0].open("pixel_input.txt");
-	//entradas[1].open("iris60.txt");
-	//entradas[2].open("iris70.txt");
+	double eta = 0.05;
+	ifstream entradas [3];
+	entradas[0].open("pixel_input15.txt");
+	entradas[1].open("pixel_input20.txt");
+	entradas[2].open("pixel_input25.txt");
 	//entradas[3].open("iris80.txt");
 	//entradas[4].open("iris90.txt");
-	int numArchivos = 1;
+	int numArchivos = 3;
 	ofstream errores;
 	UnidadSigmoidal* salida = new UnidadSigmoidal[numSalidas];
 	double* coordenadas = new double[numEntradas];
 	double* test = new double[numSalidas];
 	//Pidiendo numero de neuronas que habra en la capa intermedia.
-	int numeroNeuronasInter = 5;
+	int numeroNeuronasInter = 10;
 
 	//for(int numeroNeuronasInter = 4; numeroNeuronasInter <=10; numeroNeuronasInter++){
 		
@@ -163,6 +169,7 @@ int main(){
 
 					for(int j = 0 ; j < numEntradas; j++){
 						entrada >> coordenadas[j];
+						if(coordenadas[j] == 5) coordenadas[j] = 0.501961;
 						//cout << coordenadas[j] << " ";
 						//entrada >> ch;
 					}
@@ -196,7 +203,7 @@ int main(){
 			errores.close();
 			stringstream nombrePrueba;
 			nombrePrueba << "./ResultadosRed"<< numeroNeuronasInter << "/" << "resultados_conjunto_clases" << i;
-			prueba_Clases(red,numEntradas,numSalidas,numCapas,nombrePrueba.str());
+			prueba_Clases(red,numEntradas,numSalidas,numCapas,nombrePrueba.str(), i);
 		}
 		cout << "Se Termino de entrenar \n";
 
