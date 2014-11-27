@@ -1,0 +1,1 @@
+c++ -O2 -o PruebaPixl PruebaPixl.cpp `Magick++-config --cppflags --cxxflags --ldflags --libs`

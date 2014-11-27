@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <string>
 using namespace std;
 using namespace Magick;
 
@@ -10,44 +11,62 @@ int main(){
 	Image my_image;
 	//Pixels pix;
 	int intense;
+	vector<string> names;
 	try { 
 		//Read a file into image object 
-	    my_image.read("glickman_left_angry_open_2.pgm");
-	    //pix = my_image[0][0];
-	   // PixelPacket *pixel_cache = my_image.getPixels(20,30,10,10);
-	    //cout << pixel_cache->i;
-	    /*unsigned char *pixels = new unsigned char[64*60];
-	    int *pixelsint = new int[64*60];
-	    //int val;
-		my_image.write( 0, 0, 64, 60, "R", IntegerPixel, pixelsint);
-		cout << "R: ";
-		for(int i=0; i < 64*60; i++){
-			cout << pixelsint[i] << ",";
-		}*/
 		vector<int> red;
 		vector<int> green;
 		vector<int> blue;
 		vector<double> shade;
+		double shades[300][32*44];
+		double sh=0.0;
+		ofstream pixel_input, pixel_test;
+		pixel_input.open("pixel_input.txt");
+		pixel_test.open("pixel_test.txt");
+		ifstream file;
+		int numPrueba = 0;
+		string clasificaciones[4] = {"happy", "angry", "surprised", "sad"};
+		for(int fnum=0; fnum < 4; fnum++){
+			stringstream ss;
+			ss << "PNG/" << clasificaciones[fnum] << "_face.txt";
+			const char* s = ss.str().c_str();
+			file.open(s);
+			string line;
+			numPrueba = 0;
 
-		for(int i=0;i<60;i++)
-        {
-            ColorGray gray(my_image.pixelColor(0,i));
-            shade.push_back(gray.shade());
-            //green.push_back(greyS.green());
-            //blue.push_back(greyS.blue());
-        }
-		cout << "R: ";
-		for(int i=0; i < 60; i++){
-			cout << shade[i] << ",";
+			while(getline(file, line)){
+				my_image.read("PNG/"+line);
+				//cout << "OH SHIT WHILE\n";
+				//pixel_input << "face ";
+				for(int j=0;j<44;j++)
+		        {
+					for(int i=0;i<32;i++)
+			        {
+
+			            ColorGray gray(my_image.pixelColor(i,j));
+			            sh = gray.shade();
+			            if(numPrueba < 10){
+				            if(sh != 1 && sh != 0) pixel_input << 5 << " ";
+				            else pixel_input << gray.shade() << " ";
+				        } else {
+				        	if(sh != 1 && sh != 0) pixel_test << 5 << " ";
+				            else pixel_test << gray.shade() << " ";
+				        }
+			        }
+			    }
+			    if(numPrueba < 10){
+				    pixel_input << clasificaciones[fnum] <<"\n";
+				} else {
+					pixel_test << clasificaciones[fnum] <<"\n";
+				}
+			    numPrueba++;
+			}
+		    
+		    file.close();
 		}
+		pixel_test.close();
+		pixel_input.close();
 
-	    //intense = pixel_cache.intensity();
-
-	    // Crop the image to specified size (width, height, xOffset, yOffset)
-	    //my_image.crop( Geometry(100,100, 100, 100) );
-
-	    // Write the image to a file 
-	    //my_image.write( "x.pgm" ); 
 	} 
 	catch( Exception &error_ ) 
     { 
