@@ -10,9 +10,37 @@ int main(){
 	Image my_image;
 	//Pixels pix;
 	int intense;
+	vector<string> names;
 	try { 
 		//Read a file into image object 
-	    my_image.read("glickman_left_angry_open_2.pgm");
+		vector<int> red;
+		vector<int> green;
+		vector<int> blue;
+		vector<double> shade;
+		double shades[300][32*44];
+
+		ifstream file;
+		file.open("PNG/get_files.txt");
+		string line;
+		int fnum = 0, pnum = 0;
+		while(getline(file, line)){
+
+			my_image.read("PNG/"+line);
+			//cout << "OH SHIT WHILE\n";
+			for(int j=0;j<44;j++)
+	        {
+				for(int i=0;i<32;i++)
+		        {
+
+					//cout << j << " "<< i <<"\n";
+		            ColorGray gray(my_image.pixelColor(j,i));
+		            shades[fnum][j+(32*i)] = gray.shade();
+		            //pnum++;
+		        }
+		    }
+		    fnum++;
+		}
+	    
 	    //pix = my_image[0][0];
 	   // PixelPacket *pixel_cache = my_image.getPixels(20,30,10,10);
 	    //cout << pixel_cache->i;
@@ -24,22 +52,6 @@ int main(){
 		for(int i=0; i < 64*60; i++){
 			cout << pixelsint[i] << ",";
 		}*/
-		vector<int> red;
-		vector<int> green;
-		vector<int> blue;
-		vector<double> shade;
-
-		for(int i=0;i<60;i++)
-        {
-            ColorGray gray(my_image.pixelColor(0,i));
-            shade.push_back(gray.shade());
-            //green.push_back(greyS.green());
-            //blue.push_back(greyS.blue());
-        }
-		cout << "R: ";
-		for(int i=0; i < 60; i++){
-			cout << shade[i] << ",";
-		}
 
 	    //intense = pixel_cache.intensity();
 
