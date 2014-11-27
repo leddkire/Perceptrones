@@ -1,1 +1,2 @@
-c++ -O2 -o PruebaPixl PruebaPixl.cpp `Magick++-config --cppflags --cxxflags --ldflags --libs`
+----Para el preprocesamiento de los pixeles: c++ -O2 -o PruebaPixl PruebaPixl.cpp `Magick++-config --cppflags --cxxflags --ldflags --libs`
+----Para la red neuronal: g++ entrenamientoIrisClases.cpp -o redNeu -std=c++11
