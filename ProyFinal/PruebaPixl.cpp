@@ -45,7 +45,7 @@ int main(){
 
 			            ColorGray gray(my_image.pixelColor(i,j));
 			            sh = gray.shade();
-			            if(numPrueba < 10){
+			            if(numPrueba < 15){
 				            if(sh != 1 && sh != 0) pixel_input << 5 << " ";
 				            else pixel_input << gray.shade() << " ";
 				        } else {
@@ -54,7 +54,7 @@ int main(){
 				        }
 			        }
 			    }
-			    if(numPrueba < 10){
+			    if(numPrueba < 15){
 				    pixel_input << clasificaciones[fnum] <<"\n";
 				} else {
 					pixel_test << clasificaciones[fnum] <<"\n";
