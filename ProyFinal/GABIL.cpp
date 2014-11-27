@@ -24,8 +24,7 @@ public:
 };
 
 //Declaracion de funciones
-string codificar1(string, stringstream);
-string codificar2(string, stringstream);
+string codificar2(string);
 
 void Initializer(GAGenome&);
 float Objective(GAGenome &);
@@ -47,24 +46,20 @@ int main(int argc, char* argv[]){
 	vector<string> conjuntoPruebaCons;
 	dosVec conjuntoPruebas;
 	string lineaE;
-	int popsize  = 100;
-  int ngen     = 500;
-  float pmut   = 0.001;
-  float pcross = 0.9;
-  int tipoFit = 0;
-  int selPad = 0;
-  int selSob = 0;
+	int popsize  = 200;
+  int ngen     = 1000;
+  float pmut   = 0.0000001;
+  float pcross = 0.8;
+
 	//Definicion de parametros para el algoritmo
-	if(argc == 10){
+	if(argc == 7){
 		archivoEntren.open(argv[1]);
 		archivoPrueba.open(argv[2]);
 		popsize  = atoi(argv[3]);
 		ngen     = atoi(argv[4]);
 		pmut   = atof(argv[5]);
 		pcross = atof(argv[6]);
-		tipoFit = atoi(argv[7]);
-		selPad = atoi(argv[8]);
-		selSob = atoi(argv[9]);
+
 
 	}else if(argc == 3){
 		archivoEntren.open(argv[1]);
@@ -72,8 +67,8 @@ int main(int argc, char* argv[]){
 
 
 	}else if(argc == 1){
-		archivoEntren.open("50E");
-		archivoPrueba.open("50P");
+		archivoEntren.open("pixel_input.txt");
+		archivoPrueba.open("pixel_test.txt");
 
 	}
 	//Codificacion de conjunto de entrenamiento y prueba
@@ -82,8 +77,19 @@ int main(int argc, char* argv[]){
 		string dato;
 		stringstream datoEntrenAnt;
 		stringstream datoEntrenCons;
-		datoEntrenAnt << codificar1(streamLineaE);
-		conjuntoPruebaAnt.push_back(datoPruebaAnt.str());
+		for(int i = 0; i < (RULE_SIZE -2)/3; i++){
+			streamLineaE >> dato;
+			int datoNumerico = stoi(dato);
+			if(datoNumerico == 0){
+				datoEntrenAnt << "001";
+			}else if (datoNumerico == 5){
+				datoEntrenAnt << "010";
+			}else{
+				datoEntrenAnt << "100";
+			}
+
+		}
+		conjuntoEntrenamientoAnt.push_back(datoEntrenAnt.str());
 		streamLineaE >> dato;
 		datoEntrenCons << codificar2(dato);
 		conjuntoEntrenamientoCons.push_back(datoEntrenCons.str());
@@ -94,13 +100,26 @@ int main(int argc, char* argv[]){
 		string dato;
 		stringstream datoPruebaAnt;
 		stringstream datoPruebaCons;
-		datoEntrenAnt << codificar1(streamLineaE);
+		for(int i = 0; i < (RULE_SIZE -2)/3; i++){
+			streamLineaE >> dato;
+			int datoNumerico = stoi(dato);
+			if(datoNumerico == 0){
+				datoPruebaAnt << "001";
+			}else if (datoNumerico == 5){
+				datoPruebaAnt << "010";
+			}else{
+				datoPruebaAnt << "100";
+			}
+
+		}
 		conjuntoPruebaAnt.push_back(datoPruebaAnt.str());
 		streamLineaE >> dato;
-		datoEntrenCons << codificar2(dato);
-		conjuntoEntrenamientoCons.push_back(datoEntrenCons.str());
+		datoPruebaCons << codificar2(dato);
+		conjuntoPruebaCons.push_back(datoPruebaCons.str());
 
 	}
+cout << conjuntoEntrenamientoAnt.size() << "\n";
+
 	conjuntoEntrenamiento.ant = conjuntoEntrenamientoAnt;
 	conjuntoEntrenamiento.cons = conjuntoEntrenamientoCons;
 	conjuntoPruebas.ant = conjuntoPruebaAnt;
@@ -114,7 +133,6 @@ int main(int argc, char* argv[]){
 	float porcentajeTotal =0.0;
 	float numReglasTotal =0.0;
 	GA1DBinaryStringGenome mejor(0,fitnessPorTam,&conjuntoPruebas);
-	float mejorPorcentaje = 0.0;
 		GASteadyStateGA ga(genoma);
 		ga.pReplacement(0.5);
 		ga.scaling(GASigmaTruncationScaling());
@@ -125,6 +143,7 @@ int main(int argc, char* argv[]){
 	  	ga.flushFrequency(25);
 	  	ga.scoreFrequency(25);
 	  	for(int i = 0; i < EXPERIMENTOS; i++){
+	  		cout << "GA\n";
 	  		ga.evolve();
 	  		//cout << "The GA found:\n" << ga.statistics().bestIndividual() << "\n";
 	  		GA1DBinaryStringGenome lol(0,fitnessPorTam,&conjuntoPruebas);
@@ -134,12 +153,12 @@ int main(int argc, char* argv[]){
 	  		numReglasTotal += lol.length()/RULE_SIZE;
   		}
 
- 
+ 	cout << ga.statistics() << "\n";
 	  	promedioResultados << "    PORCENTAJE :" << porcentajeTotal/EXPERIMENTOS << "\n";
 	  	promedioResultados << "    NUMERO DE REGLAS : " <<  numReglasTotal/EXPERIMENTOS << "\n";
 	  	cout << "    PORCENTAJE :" << porcentajeTotal/EXPERIMENTOS<< "\n";
 	  	cout << "    NUMERO DE REGLAS : " <<  numReglasTotal/EXPERIMENTOS << "\n";
-	}
+
 	archivoPrueba.close();
 	archivoEntren.close();
 	promedioResultados.close();
@@ -170,13 +189,6 @@ float fitnessPorTam(GAGenome& g){
 	int longitudTotal = (longitudAnt +longitudCon);
 	int numReglas = genoma.length()/longitudTotal;
 
-
-	//Revisando si alguna parte de la regla hay un consequente "11"
-	for(int i =0; i < numReglas; i++){
-		if(genoma.gene(cjtoEntrenAnt[0].length()+(i*longitudTotal))==1 && genoma.gene(cjtoEntrenAnt[0].length()+(i*longitudTotal)+1)==1){
-			return 0.0;
-		}
-	}
 
 	//Extrayendo las reglas individuales
 	bool match = true;
@@ -214,7 +226,7 @@ float fitnessPorTam(GAGenome& g){
 		}
 	}
 	double porcentajeCorrectos = numCorrectos/cjtoEntrenAnt.size();
-	double fitness = ((porcentajeCorrectos * porcentajeCorrectos)) - (numReglas*0.001);
+	double fitness = ((porcentajeCorrectos * porcentajeCorrectos));
 	
 	return fitness;
 }
@@ -277,24 +289,6 @@ int Crossover(const GAGenome& padre1, const GAGenome& padre2, GAGenome* hijo1, G
 	return numHijos;
 }
 
-//6 bits
-string codificar1(stringstream streamLineaE){
-	stringstream binario;
-	for(int i = 0; i < (RULE_SIZE -2)/2; i++){
-		streamLineaE >> dato;
-		int datoNumerico = stoi(dato);
-		if(datoNumerico == 0){
-			binario << "001";
-		}else if (datoNumerico == 5){
-			binario << "010";
-		}else{
-			binario << "100";
-		}
-
-	}
-	return binario.str();
-}
-//5 bits
 string codificar2(string dato){
 	if(dato.compare("happy") == 0){
 		return "00";
@@ -323,12 +317,6 @@ float test(GAGenome& g, dosVec pruebas){
 	int numReglas = genoma.length()/longitudTotal;
 
 
-	//Revisando si alguna parte de la regla hay un consequente "11"
-	for(int i =0; i < numReglas; i++){
-		if(genoma.gene(cjtoEntrenAnt[0].length()+(i*longitudTotal))==1 && genoma.gene(cjtoEntrenAnt[0].length()+(i*longitudTotal)+1)==1){
-			return 0;
-		}
-	}
 	//Extrayendo las reglas individuales
 	bool match = true;
 	for(unsigned int i =0; i < cjtoEntrenAnt.size(); i++){
