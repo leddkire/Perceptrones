@@ -11,9 +11,9 @@
 #include <ga/GASStateGA.h>
 
 #define NUMERO_MAX_REGLAS 10
-#define NUMERO_MIN_REGLAS 3
-#define RULE_SIZE 30
-#define EXPERIMENTOS 100
+#define NUMERO_MIN_REGLAS 4
+#define RULE_SIZE 4226
+#define EXPERIMENTOS 1
 
 using namespace std;
 
@@ -24,11 +24,8 @@ public:
 };
 
 //Declaracion de funciones
-string codificar1(string);
-string codificar2(string);
-string codificar3(string);
-string codificar4(string);
-string codificar5(string);
+string codificar1(string, stringstream);
+string codificar2(string, stringstream);
 
 void Initializer(GAGenome&);
 float Objective(GAGenome &);
@@ -85,17 +82,10 @@ int main(int argc, char* argv[]){
 		string dato;
 		stringstream datoEntrenAnt;
 		stringstream datoEntrenCons;
-		getline(streamLineaE, dato,',');
-		datoEntrenAnt << codificar1(dato);
-		getline(streamLineaE, dato,',');
-		datoEntrenAnt << codificar2(dato);
-		getline(streamLineaE, dato,',');
-		datoEntrenAnt << codificar3(dato);
-		getline(streamLineaE, dato,',');
-		datoEntrenAnt << codificar4(dato);
-		conjuntoEntrenamientoAnt.push_back(datoEntrenAnt.str());
-		getline(streamLineaE, dato,',');
-		datoEntrenCons << codificar5(dato);
+		datoEntrenAnt << codificar1(streamLineaE);
+		conjuntoPruebaAnt.push_back(datoPruebaAnt.str());
+		streamLineaE >> dato;
+		datoEntrenCons << codificar2(dato);
 		conjuntoEntrenamientoCons.push_back(datoEntrenCons.str());
 
 	}
@@ -104,18 +94,11 @@ int main(int argc, char* argv[]){
 		string dato;
 		stringstream datoPruebaAnt;
 		stringstream datoPruebaCons;
-		getline(streamLineaE, dato,',');
-		datoPruebaAnt << codificar1(dato);
-		getline(streamLineaE, dato,',');
-		datoPruebaAnt << codificar2(dato);
-		getline(streamLineaE, dato,',');
-		datoPruebaAnt << codificar3(dato);
-		getline(streamLineaE, dato,',');
-		datoPruebaAnt << codificar4(dato);
+		datoEntrenAnt << codificar1(streamLineaE);
 		conjuntoPruebaAnt.push_back(datoPruebaAnt.str());
-		getline(streamLineaE, dato,',');
-		datoPruebaCons << codificar5(dato);
-		conjuntoPruebaCons.push_back(datoPruebaCons.str());
+		streamLineaE >> dato;
+		datoEntrenCons << codificar2(dato);
+		conjuntoEntrenamientoCons.push_back(datoEntrenCons.str());
 
 	}
 	conjuntoEntrenamiento.ant = conjuntoEntrenamientoAnt;
@@ -123,56 +106,15 @@ int main(int argc, char* argv[]){
 	conjuntoPruebas.ant = conjuntoPruebaAnt;
 	conjuntoPruebas.cons = conjuntoPruebaCons;
 	//Definiendo el genoma
-	GA1DBinaryStringGenome genoma(0,Objective,&conjuntoEntrenamiento);
+	GA1DBinaryStringGenome genoma(0,fitnessPorTam,&conjuntoEntrenamiento);
 
-	if(tipoFit == 1){
-		genoma = GA1DBinaryStringGenome(0,fitnessPorTam,&conjuntoEntrenamiento);
-		promedioResultados.open("resultados");
-	}else{
-		promedioResultados.open("resultados");
-	}
+	promedioResultados.open("resultados");
 	genoma.initializer(Initializer);
 	genoma.crossover(Crossover);
 	float porcentajeTotal =0.0;
 	float numReglasTotal =0.0;
 	GA1DBinaryStringGenome mejor(0,fitnessPorTam,&conjuntoPruebas);
 	float mejorPorcentaje = 0.0;
-	if(selSob == 1){
-
-		GAIncrementalGA gaInc(genoma);
-		gaInc.scaling(GASigmaTruncationScaling());
-		gaInc.populationSize(popsize);
-	  	gaInc.nGenerations(ngen);
-	  	gaInc.pMutation(pmut);
-	  	gaInc.pCrossover(pcross);
-	  	gaInc.flushFrequency(25);
-	  	gaInc.scoreFrequency(25);
-	  	if(selPad == 1){
-	  		gaInc.selector(GATournamentSelector());
-	  	}
-	  	for(int i = 0; i < EXPERIMENTOS; i++){
-	  		gaInc.evolve();
-	  		//cout << "The GA found:\n" << ga.statistics().bestIndividual() << "\n";
-	  		GA1DBinaryStringGenome lol(0,fitnessPorTam,&conjuntoPruebas);
-	  		lol.copy(gaInc.statistics().bestIndividual());
-	  		float prueba = test(lol,conjuntoPruebas)/conjuntoPruebaAnt.size();
-	  		porcentajeTotal += prueba;
-	  		numReglasTotal += lol.length()/RULE_SIZE;
-	  		if(prueba >= mejorPorcentaje){
-	  			mejorPorcentaje = prueba;
-	  			mejor.copy(lol);
-	  		}
-
-  		}
- 
-
-	  	promedioResultados << "    PORCENTAJE :" << porcentajeTotal/EXPERIMENTOS<< "\n";
-	  	promedioResultados << "    NUMERO DE REGLAS : " <<  numReglasTotal/EXPERIMENTOS << "\n";
-	  	promedioResultados << "MEJOR INDIVIDUO : " << mejor << "\n";
-	  	cout << "    PORCENTAJE :" << porcentajeTotal/EXPERIMENTOS<< "\n";
-	  	cout << "    NUMERO DE REGLAS : " <<  numReglasTotal/EXPERIMENTOS << "\n";
-	  	cout << "MEJOR INDIVIDUO : " << mejor << "\n";
-	}else{
 		GASteadyStateGA ga(genoma);
 		ga.pReplacement(0.5);
 		ga.scaling(GASigmaTruncationScaling());
@@ -182,30 +124,21 @@ int main(int argc, char* argv[]){
 	  	ga.pCrossover(pcross);
 	  	ga.flushFrequency(25);
 	  	ga.scoreFrequency(25);
-	  	if(selPad == 1){
-	  		ga.selector(GATournamentSelector());
-	  	}
 	  	for(int i = 0; i < EXPERIMENTOS; i++){
-  		ga.evolve();
-  		//cout << "The GA found:\n" << ga.statistics().bestIndividual() << "\n";
-  		GA1DBinaryStringGenome lol(0,fitnessPorTam,&conjuntoPruebas);
-  		lol.copy(ga.statistics().bestIndividual());
-  		float prueba = test(lol,conjuntoPruebas)/conjuntoPruebaAnt.size();
-	  	porcentajeTotal += prueba;
-  		numReglasTotal += lol.length()/RULE_SIZE;
-  		if(prueba >= mejorPorcentaje){
-  				mejorPorcentaje = prueba;
-	  			mejor.copy(lol);
-	  		}
+	  		ga.evolve();
+	  		//cout << "The GA found:\n" << ga.statistics().bestIndividual() << "\n";
+	  		GA1DBinaryStringGenome lol(0,fitnessPorTam,&conjuntoPruebas);
+	  		lol.copy(ga.statistics().bestIndividual());
+	  		float prueba = test(lol,conjuntoPruebas)/conjuntoPruebaAnt.size();
+		  	porcentajeTotal += prueba;
+	  		numReglasTotal += lol.length()/RULE_SIZE;
   		}
 
  
 	  	promedioResultados << "    PORCENTAJE :" << porcentajeTotal/EXPERIMENTOS << "\n";
 	  	promedioResultados << "    NUMERO DE REGLAS : " <<  numReglasTotal/EXPERIMENTOS << "\n";
-	  	promedioResultados << "MEJOR INDIVIDUO : " << mejor << "\n";
 	  	cout << "    PORCENTAJE :" << porcentajeTotal/EXPERIMENTOS<< "\n";
 	  	cout << "    NUMERO DE REGLAS : " <<  numReglasTotal/EXPERIMENTOS << "\n";
-	  	cout << "MEJOR INDIVIDUO : " << mejor << "\n";
 	}
 	archivoPrueba.close();
 	archivoEntren.close();
@@ -220,67 +153,6 @@ void Initializer(GAGenome& g){
 	genoma.resize(tamGenoma);
 	genoma.randomize();
 
-}
-
-float Objective(GAGenome& g){
-	
-	GA1DBinaryStringGenome & genoma = (GA1DBinaryStringGenome &)g;
-	dosVec* cjtoEntren = (dosVec*)g.userData();
-	vector<string> cjtoEntrenAnt = cjtoEntren -> ant;
-	vector<string> cjtoEntrenCons = cjtoEntren -> cons;
-	stringstream streamG;
-	string datosGenoma;
-	double numCorrectos = 0.0;
-	//Derivar el numero de reglas en el genoma
-	unsigned int longitudAnt = cjtoEntrenAnt[0].size();
-	unsigned int longitudCon = cjtoEntrenCons[0].size();
-	int longitudTotal = (longitudAnt +longitudCon);
-	int numReglas = genoma.length()/longitudTotal;
-
-
-	//Revisando si alguna parte de la regla hay un consequente "11"
-	for(int i =0; i < numReglas; i++){
-		if(genoma.gene(cjtoEntrenAnt[0].length()+(i*longitudTotal))==1 && genoma.gene(cjtoEntrenAnt[0].length()+(i*longitudTotal)+1)==1){
-			return 0.0;
-		}
-	}
-	//Extrayendo las reglas individuales
-	bool match = true;
-	for(unsigned int i =0; i < cjtoEntrenAnt.size(); i++){
-		
-		for(int k = 0; k < numReglas; k++){
-			match = true;
-			for(unsigned int j =0; j < cjtoEntrenAnt[i].length();j++){
-			
-				if(cjtoEntrenAnt[i].at(j) == '1'){
-					if(genoma.gene(j+(longitudTotal*k)) == 0){
-						match = false;
-						break;
-					}
-				}
-			}
-			//Si encontro una regla que aplica, evaluar el resultado para ver si es correcto
-			
-			if(match){
-
-				bool matchRes = true;
-
-				for(unsigned int j = 0; j < cjtoEntrenCons[i].length();j++){
-
-					if((cjtoEntrenCons[i].at(j) - '0') != genoma.gene(cjtoEntrenAnt[i].length()+j +(longitudTotal*k)) ){
-						matchRes = false;
-						break;
-					}
-				}
-				if(matchRes){
-					numCorrectos += 1.0;
-					break;
-				}
-			}
-		}
-	}
-	double porcentajeCorrectos = numCorrectos/cjtoEntrenAnt.size();
-	return (porcentajeCorrectos) * porcentajeCorrectos;
 }
 
 float fitnessPorTam(GAGenome& g){
@@ -406,89 +278,29 @@ int Crossover(const GAGenome& padre1, const GAGenome& padre2, GAGenome* hijo1, G
 }
 
 //6 bits
-string codificar1(string dato){
-	double datoNumerico = stoi(dato);
-	if(4.0 <= datoNumerico && datoNumerico < 4.5){
-		return "100000";
-	}else if(4.5 <= datoNumerico && datoNumerico < 5.0){
-		return "010000";
-	}else if(5.0 <= datoNumerico && datoNumerico < 5.5){
-		return "001000";
-	}else if(5.5 <= datoNumerico && datoNumerico < 6.0){
-		return "000100";
-	}else if(6.0 <= datoNumerico && datoNumerico < 6.5){
-		return "000010";
-	}else{
-		return "000001";
+string codificar1(stringstream streamLineaE){
+	stringstream binario;
+	for(int i = 0; i < (RULE_SIZE -2)/2; i++){
+		streamLineaE >> dato;
+		int datoNumerico = stoi(dato);
+		if(datoNumerico == 0){
+			binario << "001";
+		}else if (datoNumerico == 5){
+			binario << "010";
+		}else{
+			binario << "100";
+		}
+
 	}
+	return binario.str();
 }
 //5 bits
 string codificar2(string dato){
-	double datoNumerico = stoi(dato);
-	if(2.0 <= datoNumerico && datoNumerico < 2.5){
-		return "10000";
-	}else if(2.5 <= datoNumerico && datoNumerico < 3.0){
-		return "01000";
-	}else if(3.0 <= datoNumerico && datoNumerico < 3.5){
-		return "00100";
-	}else if(3.5 <= datoNumerico && datoNumerico < 4.0){
-		return "00010";
-	}else{
-		return "00001";
-	}
-}
-//12 bits
-string codificar3(string dato){
-	double datoNumerico = stoi(dato);
-	if(1.0 <= datoNumerico && datoNumerico < 1.5){
-		return "100000000000";
-	}else if(1.5 <= datoNumerico && datoNumerico < 2.0){
-		return "010000000000";
-	}else if(2.0 <= datoNumerico && datoNumerico < 2.5){
-		return "001000000000";
-	}else if(2.5 <= datoNumerico && datoNumerico < 3.0){
-		return "000100000000";
-	}else if(3.0 <= datoNumerico && datoNumerico < 3.5){
-		return "000010000000";
-	}else if(3.5 <= datoNumerico && datoNumerico < 4.0){
-		return "000001000000";
-	}else if(4.0 <= datoNumerico && datoNumerico < 4.5){
-		return "000000100000";
-	}else if(4.5 <= datoNumerico && datoNumerico < 5.0){
-		return "000000010000";
-	}else if(5.0 <= datoNumerico && datoNumerico < 5.5){
-		return "000000001000";
-	}else if(5.5 <= datoNumerico && datoNumerico < 6.0){
-		return "000000000100";
-	}else if(6.0 <= datoNumerico && datoNumerico < 6.5){
-		return "000000000010";
-	}else{
-		return "000000000001";
-	}
-}
-//5 bits
-string codificar4(string dato){
-	double datoNumerico = stoi(dato);
-	if(0 <= datoNumerico && datoNumerico < 0.5){
-		return "10000";
-	}else if(0.5 <= datoNumerico && datoNumerico < 1.0){
-		return "01000";
-	}else if(1 <= datoNumerico && datoNumerico < 1.5){
-		return "00100";
-	}else if(1.5 <= datoNumerico && datoNumerico < 2.0){
-		return "00010";
-	}else{
-		return "00001";
-	}
-	return dato;
-}
-//2 bits
-string codificar5(string dato){
-	if(dato.compare("Iris-setosa") == 0){
+	if(dato.compare("happy") == 0){
 		return "00";
-	}else if(dato.compare("Iris-versicolor") ==0){
+	}else if(dato.compare("angry") ==0){
 		return "01";
-	}else if(dato.compare("Iris-virginica") == 0){
+	}else if(dato.compare("sad") == 0){
 		return "10";
 	}else{
 		return "11";
