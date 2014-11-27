@@ -12,7 +12,7 @@ int main(){
 	int intense;
 	try { 
 		//Read a file into image object 
-	    my_image.read("glickman_left_angry_open.pgm");
+	    my_image.read("glickman_left_angry_open_2.pgm");
 	    //pix = my_image[0][0];
 	   // PixelPacket *pixel_cache = my_image.getPixels(20,30,10,10);
 	    //cout << pixel_cache->i;
@@ -28,15 +28,16 @@ int main(){
 		vector<int> green;
 		vector<int> blue;
 		vector<double> shade;
-		for(int i=0;i<10;i++)
+
+		for(int i=0;i<60;i++)
         {
-            ColorGray gray(my_image.pixelColor(0,120));
+            ColorGray gray(my_image.pixelColor(0,i));
             shade.push_back(gray.shade());
             //green.push_back(greyS.green());
             //blue.push_back(greyS.blue());
         }
 		cout << "R: ";
-		for(int i=0; i < 120; i++){
+		for(int i=0; i < 60; i++){
 			cout << shade[i] << ",";
 		}
 
@@ -46,7 +47,7 @@ int main(){
 	    //my_image.crop( Geometry(100,100, 100, 100) );
 
 	    // Write the image to a file 
-	    my_image.write( "x.pgm" ); 
+	    //my_image.write( "x.pgm" ); 
 	} 
 	catch( Exception &error_ ) 
     { 
